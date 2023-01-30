@@ -1,0 +1,207 @@
+{
+	"info": {
+		"_postman_id": "a47e8120-aab7-4557-be76-29927a4d2fe7",
+		"name": "Test Postman QA Live sanber",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "196b3df9-ab03-4b4d-9bf5-3f1c6082052c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"include token\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"token\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "35c758c6-1bfe-4319-b35e-2ad6c5ee50a4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\" : \"admin\",\n    \"password\" : \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/auth",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"auth"
+					],
+					"query": [
+						{
+							"key": "",
+							"value": null,
+							"type": "text",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e5f624f-2416-4298-9913-a75796e32074",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Terdapat Tulisan sanber\", function () {",
+							"    pm.expect(pm.response.text()).to.include(\"sanber\");",
+							"});",
+							"",
+							"var jsonData = pm.response.json();",
+							"pm.environment.set(\"bookingid\", jsonData.bookingid);",
+							"pm.environment.set(\"firstname\", jsonData.firstname);",
+							"",
+							"pm.test(\"Firstname is \"+jsonData.firstname, function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.booking.firstname).to.eql(\"{{FirstName}}\");",
+							"});",
+							"",
+							"pm.test(\"Lastname is\"+jsonData.lastname, function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.lastname).to.eql(\"jsonData.lastname\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7a7460f3-d7be-4258-989d-92473cd88b17",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "ba7cea9f-e964-49da-88fe-c7c74dc8d785",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"{{FirstName}}\",\n    \"lastname\" : \"{{LastName}}\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"sanber\"\n}"
+				},
+				"url": "{{baseURL}}/booking"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Booking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e067abb2-38fc-4a92-b6d1-d11b163ea178",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "e6913ab3-6d73-4557-afb9-53413b723827",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstname\" : \"{{FirstName}}\",\n    \"lastname\" : \"{{LastName}}\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Sanber Update\"\n}"
+				},
+				"url": {
+					"raw": "{{baseURL}}/booking/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"booking",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{bookingid}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetBookingID",
+			"id": "3defbbfc-a181-45cb-8e18-6e70e185f163",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "https://restful-booker.herokuapp.com/booking"
+			},
+			"response": []
+		}
+	]
+}
